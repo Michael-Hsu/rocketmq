@@ -25,6 +25,9 @@ import org.apache.rocketmq.common.message.MessageQueue;
 
 /**
  * Average Hashing queue algorithm
+ * Consumer端默认使用该种负载均衡策略。
+ * 负载均衡是将Topic下的所有Message Queue分配到ConsumerGroup中不同的Consumer中，因此Message Queue和Consumer的数量关系
+ * 会影响负载均衡的效果。
  */
 public class AllocateMessageQueueAveragely implements AllocateMessageQueueStrategy {
     private final InternalLogger log = ClientLogger.getLog();
