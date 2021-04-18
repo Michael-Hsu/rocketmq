@@ -41,12 +41,17 @@ Message Queue 用于存储消息的物理地址（相当于是一个索引，消
   
 ## 10 消费者组（Consumer Group）
   同一类Consumer的集合，这类Consumer通常消费同一类消息且消费逻辑一致。消费者组使得在消息消费方面，实现负载均衡和容错的目标变得非常容易。要注意的是，消费者组的消费者实例必须订阅完全相同的Topic。RocketMQ 支持两种消息模式：集群消费（Clustering）和广播消费（Broadcasting）。
+  **RocketMQ中默认采用集群消费模式**
   
 ## 11 集群消费（Clustering）
-集群消费模式下,相同Consumer Group的每个Consumer实例平均分摊消息。
+集群消费模式下,相同Consumer Group的每个Consumer实例**平均分摊消息**。一条消息被ConsumerGroup中的某个消息消费完后，不会在被其他Consumer消费。
 
 ## 12 广播消费（Broadcasting）
-广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。
+广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。一条消息被多个Consumer消费，即使这些Consumer属于同一ConsumerGroup，消息也会被ConsumerGroup中的
+每个消费者消费一次。广播消费中，ConsumerGroup的概念在消息划分方面无意义。
+适用场景：每条消息需要被集群下的每个消费者处理的场景。
+举例：Consumer所在的机器使用了本地缓存，收到消息后需要更新缓存，这时就需要使用广播模式，不能使用集群模式。
+ps:这是一个不太好的应用场景，因为RocketMQ广播消费模式下一旦Consumer消费失败并不会进行消息重投。一般像这种就应使用redis这样的分布式缓存，而不是使用本地缓存。
 
 ## 13 普通顺序消息（Normal Ordered Message）
 普通顺序消费模式下，消费者通过同一个消费队列收到的消息是有顺序的，不同消息队列收到的消息则可能是无顺序的。
